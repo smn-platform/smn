@@ -102,4 +102,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bandit SAST integration for security scanning
 - 203 passing tests covering all modules
 
-[0.1.0]: https://github.com/leylabs/smn/releases/tag/v0.1.0
+[0.1.0]: https://github.com/smn-platform/smn/releases/tag/v0.1.0

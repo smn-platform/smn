@@ -4,7 +4,7 @@
 
 SMN is the neutral control and execution layer for production AI agent systems. It wraps every agent action in identity checks, policy enforcement, cost controls, output guardrails, and an immutable audit trail — so you can move from pilot to governed production.
 
-Built by [Ley Labs](https://leylabs.dev). Open-core: Community features are MIT-licensed. Pro features require a commercial license.
+Built by [Ley Labs](https://leylabs.dev) · GitHub: [@smn-platform](https://github.com/smn-platform). Open-core: Community features are MIT-licensed. Pro features require a commercial license.
 
 ---
 
