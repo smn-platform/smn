@@ -1,0 +1,21 @@
+# Default policy — allows all actions with standard limits.
+# Suitable for development and limited-risk agents.
+
+name: default
+risk_level: limited
+
+rules:
+  - action: "*"
+    effect: allow
+
+limits:
+  max_cost_per_task_usd: 5.00
+  max_steps_per_task: 50
+  max_tool_calls_per_minute: 120
+
+governance:
+  require_transparency_disclosure: true
+  require_human_oversight: false
+  log_inputs: true
+  log_outputs: true
+  require_impact_assessment: false

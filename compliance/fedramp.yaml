@@ -1,0 +1,164 @@
+# FedRAMP Compliance Pack for SMN
+# Federal Risk and Authorization Management Program
+#
+# This policy maps to FedRAMP Moderate baseline controls (NIST SP 800-53 Rev 5)
+# for AI agents operating in federal government environments.
+#
+# Apply with: smn policy apply --file compliance/fedramp.yaml
+
+name: fedramp-moderate
+description: "FedRAMP Moderate baseline controls for AI agents in federal systems"
+risk_level: high
+version: "1.0"
+framework: fedramp
+applicable_regulations:
+  - "NIST SP 800-53 Rev 5 — Security and Privacy Controls"
+  - "FedRAMP Moderate Baseline (2024)"
+  - "FISMA — Federal Information Security Modernization Act"
+  - "OMB M-24-10 — AI Governance"
+  - "EO 14110 — Safe, Secure, and Trustworthy AI"
+
+rules:
+  # ── Access Control (AC) ──
+  - action: "*"
+    effect: allow
+    conditions:
+      context_match:
+        authenticated: true
+        piv_verified: true
+    reason: "AC-2: All access requires authentication via PIV or CAC"
+
+  - action: "admin:*"
+    effect: deny
+    conditions:
+      context_match:
+        mfa_verified: false
+    reason: "IA-2(1): Privileged access requires multi-factor authentication"
+
+  - action: "*"
+    effect: deny
+    conditions:
+      context_match:
+        account_status: disabled
+    reason: "AC-2(3): Disabled accounts cannot perform any action"
+
+  # ── Least Privilege (AC-6) ──
+  - action: "system:configure"
+    effect: deny
+    conditions:
+      context_match:
+        role: operator
+    reason: "AC-6(1): System configuration restricted to administrators"
+
+  - action: "agent:create"
+    effect: allow
+    conditions:
+      context_match:
+        role: developer
+        clearance_level: moderate
+    reason: "AC-6: Agent creation requires appropriate clearance"
+
+  # ── Audit (AU) ──
+  - action: "audit:delete"
+    effect: deny
+    reason: "AU-9: Audit records cannot be deleted or modified"
+
+  - action: "audit:export"
+    effect: allow
+    conditions:
+      context_match:
+        role: auditor
+    reason: "AU-6: Only auditors can export audit records"
+
+  # ── System Integrity (SI) ──
+  - action: "file:upload"
+    effect: deny
+    conditions:
+      context_match:
+        malware_scanned: false
+    reason: "SI-3: All uploads must pass malware scanning"
+
+  # ── Boundary Protection (SC-7) ──
+  - action: "http:*"
+    effect: deny
+    conditions:
+      context_match:
+        destination_external: true
+        egress_approved: false
+    reason: "SC-7: External communications require approved egress rules"
+
+  - action: "http:*"
+    effect: deny
+    conditions:
+      context_match:
+        transport: "http"
+    reason: "SC-8: All transmissions must use FIPS 140-2 validated encryption"
+
+  # ── Session Management (SC-10) ──
+  - action: "*"
+    effect: deny
+    conditions:
+      context_match:
+        session_expired: true
+    reason: "SC-10: Sessions terminate after 30 minutes of inactivity"
+
+  # ── Incident Response (IR) ──
+  - action: "incident:report"
+    effect: allow
+    reason: "IR-6: Incident reporting is always permitted"
+
+  # ── Continuous Monitoring (CA-7) ──
+  - action: "monitoring:disable"
+    effect: deny
+    reason: "CA-7: Continuous monitoring cannot be disabled"
+
+limits:
+  max_cost_per_task_usd: 50.00
+  max_steps_per_task: 200
+  max_tool_calls_per_minute: 60
+  session_timeout_minutes: 30
+
+governance:
+  require_transparency_disclosure: true
+  require_human_oversight: true
+  log_inputs: true
+  log_outputs: true
+  audit_trail_immutable: true
+  data_retention_days: 1095  # 3 years minimum per NARA
+  encryption_required: true
+  fips_140_2_required: true
+  continuous_monitoring: true
+  vulnerability_scanning: true
+  incident_response_plan: true
+  poa_and_m_tracking: true  # Plan of Action and Milestones
+
+guardrails:
+  pii_detection: true
+  pii_action: redact
+  cui_protection: true  # Controlled Unclassified Information
+  content_policy:
+    block_patterns:
+      - "\\b\\d{3}-\\d{2}-\\d{4}\\b"  # SSN
+      - "(?i)\\b(?:secret|top secret|confidential)\\b"  # Classification markers
+    block_categories:
+      - classified_information
+      - export_controlled
+  max_output_tokens: 4096
+  data_residency: us_only
+
+# FedRAMP Moderate Control Families Addressed:
+# AC  - Access Control (18 controls)
+# AU  - Audit and Accountability (12 controls)
+# CA  - Security Assessment and Authorization (9 controls)
+# CM  - Configuration Management (11 controls)
+# IA  - Identification and Authentication (11 controls)
+# IR  - Incident Response (8 controls)
+# MA  - Maintenance (6 controls)
+# MP  - Media Protection (8 controls)
+# PE  - Physical and Environmental Protection (addressed by cloud provider)
+# PL  - Planning (4 controls)
+# PS  - Personnel Security (addressed by organisation)
+# RA  - Risk Assessment (5 controls)
+# SA  - System and Services Acquisition (11 controls)
+# SC  - System and Communications Protection (28 controls)
+# SI  - System and Information Integrity (12 controls)

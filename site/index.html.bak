@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMN — Secure Multi-agent Network</title>
+  <meta name="description" content="Enterprise-grade AI agent orchestration platform with built-in security, compliance, and observability. Deploy autonomous agents that governments and enterprises trust.">
+  <meta name="keywords" content="AI agents, multi-agent, orchestration, enterprise AI, secure AI, autonomous agents, agent framework">
+  <link rel="canonical" href="https://leylabs.dev">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <!-- Open Graph -->
+  <meta property="og:title" content="SMN — Secure Multi-agent Network">
+  <meta property="og:description" content="Enterprise-grade AI agent orchestration with built-in security, compliance, and observability.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://leylabs.dev">
+  <!-- Inline styles — no external dependencies -->
+  <style>
+    :root {
+      --color-bg: #0a0e17;
+      --color-surface: #111827;
+      --color-border: #1e293b;
+      --color-primary: #3b82f6;
+      --color-primary-hover: #2563eb;
+      --color-accent: #10b981;
+      --color-text: #f1f5f9;
+      --color-muted: #94a3b8;
+      --color-danger: #ef4444;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --max-width: 1120px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--color-primary); text-decoration: none; }
+    a:hover { color: var(--color-primary-hover); }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(10,14,23,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0 2rem;
+    }
+    .nav-inner {
+      max-width: var(--max-width); margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em;
+      color: var(--color-text);
+    }
+    .logo span { color: var(--color-primary); }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a { color: var(--color-muted); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--color-text); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.4rem; border-radius: 8px; font-weight: 600;
+      font-size: 0.9rem; transition: all 0.15s ease;
+      border: none; cursor: pointer; text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--color-primary); color: #fff;
+    }
+    .btn-primary:hover { background: var(--color-primary-hover); color: #fff; }
+    .btn-outline {
+      background: transparent; color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+    .btn-outline:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+    /* Hero */
+    .hero {
+      padding: 10rem 2rem 6rem;
+      text-align: center;
+      background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.12) 0%, transparent 60%);
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800; letter-spacing: -0.03em;
+      line-height: 1.1; margin-bottom: 1.5rem;
+    }
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.25rem; color: var(--color-muted);
+      max-width: 640px; margin: 0 auto 2.5rem;
+    }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .hero-code {
+      margin: 3rem auto 0; max-width: 580px; text-align: left;
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: 12px; padding: 1.5rem; font-family: var(--font-mono);
+      font-size: 0.85rem; color: var(--color-muted); overflow-x: auto;
+    }
+    .hero-code .comment { color: #475569; }
+    .hero-code .cmd { color: var(--color-accent); }
+    .hero-code .str { color: #f59e0b; }
+
+    /* Sections */
+    section { padding: 5rem 2rem; }
+    .container { max-width: var(--max-width); margin: 0 auto; }
+    .section-label {
+      font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--color-primary);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: 2.25rem; font-weight: 700; letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .section-desc {
+      color: var(--color-muted); font-size: 1.1rem;
+      max-width: 600px; margin-bottom: 3rem;
+    }
+
+    /* Feature grid */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px; padding: 2rem;
+      transition: border-color 0.2s;
+    }
+    .feature-card:hover { border-color: var(--color-primary); }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 1rem;
+      background: rgba(59,130,246,0.1);
+    }
+    .feature-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .feature-card p { color: var(--color-muted); font-size: 0.95rem; }
+
+    /* Architecture */
+    .arch-planes {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    }
+    .plane {
+      border: 1px solid var(--color-border); border-radius: 12px;
+      padding: 2rem; text-align: center;
+    }
+    .plane h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .plane p { color: var(--color-muted); font-size: 0.9rem; }
+    .plane.control { border-color: var(--color-primary); }
+    .plane.execution { border-color: var(--color-accent); }
+    .plane.trust { border-color: #f59e0b; }
+    .plane-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.12em; padding: 0.25rem 0.75rem;
+      border-radius: 99px; display: inline-block; margin-bottom: 1rem;
+    }
+    .control .plane-label { background: rgba(59,130,246,0.15); color: var(--color-primary); }
+    .execution .plane-label { background: rgba(16,185,129,0.15); color: var(--color-accent); }
+    .trust .plane-label { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .price-card {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: 12px; padding: 2rem;
+    }
+    .price-card.featured { border-color: var(--color-primary); position: relative; }
+    .price-card.featured::before {
+      content: 'Most Popular'; position: absolute; top: -12px; left: 50%;
+      transform: translateX(-50%); background: var(--color-primary);
+      color: #fff; font-size: 0.75rem; font-weight: 600;
+      padding: 0.2rem 0.75rem; border-radius: 99px;
+    }
+    .price-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .price-amount {
+      font-size: 2.5rem; font-weight: 800; margin-bottom: 0.25rem;
+    }
+    .price-period { color: var(--color-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .price-features { list-style: none; margin-bottom: 2rem; }
+    .price-features li {
+      padding: 0.4rem 0; color: var(--color-muted);
+      font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .price-features li::before { content: '✓'; color: var(--color-accent); font-weight: 700; }
+
+    /* Trust */
+    .trust-badges {
+      display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    .badge {
+      text-align: center; color: var(--color-muted); font-size: 0.85rem;
+    }
+    .badge-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+    /* CTA */
+    .cta {
+      text-align: center; padding: 6rem 2rem;
+      background: radial-gradient(ellipse at 50% 100%, rgba(59,130,246,0.1) 0%, transparent 60%);
+    }
+    .cta h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; }
+    .cta p { color: var(--color-muted); font-size: 1.15rem; margin-bottom: 2rem; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--color-border);
+      padding: 3rem 2rem; color: var(--color-muted); font-size: 0.85rem;
+    }
+    .footer-inner {
+      max-width: var(--max-width); margin: 0 auto;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem;
+    }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--color-muted); }
+    .footer-links a:hover { color: var(--color-text); }
+
+    @media (max-width: 768px) {
+      .arch-planes { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo"><span>SMN</span></a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://github.com/leylabs/smn" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://docs.leylabs.dev" target="_blank" rel="noopener">Docs</a>
+      <a href="#get-started" class="btn btn-primary">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>
+    AI Agents That<br>
+    <span class="gradient">Governments Trust</span>
+  </h1>
+  <p>
+    Enterprise-grade multi-agent orchestration with built-in security,
+    compliance, and observability. From prototype to production in minutes.
+  </p>
+  <div class="hero-buttons">
+    <a href="#get-started" class="btn btn-primary">Get Started Free</a>
+    <a href="https://docs.leylabs.dev" class="btn btn-outline" target="_blank" rel="noopener">Read the Docs</a>
+  </div>
+  <div class="hero-code">
+    <div class="comment"># Install and launch</div>
+    <div><span class="cmd">$</span> pip install smn</div>
+    <div><span class="cmd">$</span> smn init &amp;&amp; smn serve</div>
+    <br>
+    <div class="comment"># Create an agent and run a task</div>
+    <div><span class="cmd">$</span> smn agent create --name <span class="str">"analyst"</span> --model anthropic/claude-sonnet-4-6-20250415</div>
+    <div><span class="cmd">$</span> smn task run --agent analyst --input <span class="str">"Summarise Q4 report"</span></div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">Capabilities</div>
+    <h2 class="section-title">Everything You Need for Production AI</h2>
+    <p class="section-desc">
+      Purpose-built for enterprise AI agent deployment.
+    </p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>ABAC Policy Engine</h3>
+        <p>Attribute-based access control with tenant-scoped isolation. Define who can do what, on which resources, under what conditions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Immutable Audit Trail</h3>
+        <p>Every agent action logged with cryptographic integrity. Full traceability from task submission to completion.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Runtime Guardrails</h3>
+        <p>Content filtering, cost limits, and execution constraints that prevent agents from going rogue — before damage is done.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔌</div>
+        <h3>MCP Tool Integration</h3>
+        <p>Connect agents to any external system via the Model Context Protocol. Extensible connector architecture.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💾</div>
+        <h3>Checkpoint & Recovery</h3>
+        <p>Long-running tasks survive failures. Automatic state persistence and recovery with configurable strategies.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Persistent Memory</h3>
+        <p>Agents remember across sessions. Scoped memory with semantic search and configurable retention policies.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤝</div>
+        <h3>Multi-Agent Orchestration</h3>
+        <p>Coordinate teams of specialised agents. Sequential, parallel, and DAG-based execution patterns.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📡</div>
+        <h3>Real-Time Streaming</h3>
+        <p>Server-Sent Events for live task progress. Watch agents think, decide, and act in real-time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Kill Switch</h3>
+        <p>Emergency halt for all agent execution. One API call stops everything — instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>OpenTelemetry Native</h3>
+        <p>Distributed tracing, metrics, and logs out of the box. Plug into Prometheus, Grafana, Jaeger, or any OTLP backend.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>LLM Provider Abstraction</h3>
+        <p>Switch between OpenAI, Anthropic, Azure, or any provider without code changes. Built-in retry, fallback, and circuit breaker.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <h3>Usage-Based Billing</h3>
+        <p>Stripe-integrated metering, subscription management, and per-task invoicing. Multi-tier pricing out of the box.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section id="architecture" style="background: var(--color-surface);">
+  <div class="container">
+    <div class="section-label">Architecture</div>
+    <h2 class="section-title">Three-Plane Design</h2>
+    <p class="section-desc">
+      Inspired by Kubernetes' control/data plane separation. Security is not bolted on — it's structural.
+    </p>
+    <div class="arch-planes">
+      <div class="plane control">
+        <div class="plane-label">Control Plane</div>
+        <h3>API &amp; CLI</h3>
+        <p>REST API, CLI, SSE streaming, authentication, rate limiting, and request routing.</p>
+      </div>
+      <div class="plane execution">
+        <div class="plane-label">Execution Plane</div>
+        <h3>Agent Runtime</h3>
+        <p>Task execution, LLM integration, tool calling, memory, checkpointing, and orchestration.</p>
+      </div>
+      <div class="plane trust">
+        <div class="plane-label">Trust Plane</div>
+        <h3>Security &amp; Compliance</h3>
+        <p>Policy engine, identity, audit trail, guardrails, and emergency kill switch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, Transparent Pricing</h2>
+    <p class="section-desc">
+      Start free. Scale as you grow. Enterprise plans include dedicated support and custom SLAs.
+    </p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Starter</h3>
+        <div class="price-amount">£0</div>
+        <div class="price-period">Free forever · open-source</div>
+        <ul class="price-features">
+          <li>Unlimited agents</li>
+          <li>1,000 tasks / month</li>
+          <li>Community support</li>
+          <li>Full audit trail</li>
+          <li>All guardrails &amp; security</li>
+          <li>Python &amp; TypeScript SDKs</li>
+        </ul>
+        <a href="#get-started" class="btn btn-outline" style="width:100%; justify-content:center;">Get Started</a>
+      </div>
+      <div class="price-card featured">
+        <h3>Pro</h3>
+        <div class="price-amount">£199</div>
+        <div class="price-period">per month</div>
+        <ul class="price-features">
+          <li>Unlimited agents</li>
+          <li>10,000 tasks / month</li>
+          <li>SSO / SAML integration</li>
+          <li>Compliance exports</li>
+          <li>Email support (48h SLA)</li>
+          <li>Multi-tenant admin</li>
+        </ul>
+        <a href="#get-started" class="btn btn-primary" style="width:100%; justify-content:center;">Get Started</a>
+      </div>
+      <div class="price-card">
+        <h3>Enterprise</h3>
+        <div class="price-amount">Custom</div>
+        <div class="price-period">contact sales</div>
+        <ul class="price-features">
+          <li>Unlimited agents</li>
+          <li>Unlimited tasks</li>
+          <li>Dedicated support (4h SLA)</li>
+          <li>99.9% uptime SLA</li>
+          <li>Data residency controls</li>
+          <li>Custom compliance packs</li>
+          <li>On-premise deployment</li>
+          <li>SSO / SAML integration</li>
+        </ul>
+        <a href="mailto:hello@leylabs.dev" class="btn btn-outline" style="width:100%; justify-content:center;">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust -->
+<section style="background: var(--color-surface);">
+  <div class="container" style="text-align: center;">
+    <div class="section-label">Trust &amp; Compliance</div>
+    <h2 class="section-title">Built for Regulated Industries</h2>
+    <p class="section-desc" style="margin-left:auto; margin-right:auto;">
+      SMN is designed from the ground up to meet the security and compliance
+      requirements of government, financial services, and healthcare.
+    </p>
+    <div class="trust-badges">
+      <div class="badge">
+        <div class="badge-icon">&#x1F1EA;&#x1F1FA;</div>
+        <div>EU AI Act<br>Aligned</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">🔐</div>
+        <div>Encryption<br>at Rest &amp; Transit</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">📋</div>
+        <div>Full<br>Audit Trail</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">🛡️</div>
+        <div>RBAC &amp;<br>Tenant Isolation</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">🏛️</div>
+        <div>Compliance<br>Ready Architecture</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">🌐</div>
+        <div>Open-Source<br>Core</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="get-started">
+  <h2>Ready to Ship Secure AI?</h2>
+  <p>Get started in under 5 minutes. No credit card required.</p>
+  <div class="hero-buttons">
+    <a href="https://github.com/leylabs/smn" class="btn btn-primary" target="_blank" rel="noopener">View on GitHub</a>
+    <a href="mailto:hello@leylabs.dev" class="btn btn-outline">Contact Us</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div>© 2026 Ley Labs Ltd. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="https://github.com/leylabs/smn" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://discord.gg/leylabs" target="_blank" rel="noopener">Discord</a>
+      <a href="mailto:hello@leylabs.dev">Contact</a>
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

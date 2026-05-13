@@ -1,0 +1,112 @@
+# SOX Compliance Pack for SMN
+# Sarbanes-Oxley Act of 2002
+#
+# This policy enforces IT General Controls (ITGCs) relevant to
+# AI agents operating in financial reporting environments.
+#
+# Apply with: smn policy apply --file compliance/sox.yaml
+
+name: sox-compliance
+description: "SOX IT General Controls for AI agents in financial reporting"
+risk_level: high
+version: "1.0"
+framework: sox
+applicable_regulations:
+  - "SOX Section 302 — Corporate Responsibility for Financial Reports"
+  - "SOX Section 404 — Management Assessment of Internal Controls"
+  - "COSO 2013 Framework — Internal Control"
+  - "COBIT 2019 — IT Governance"
+
+rules:
+  # ── Access Control (COSO Principle 12) ──
+  - action: "*"
+    effect: allow
+    conditions:
+      context_match:
+        authenticated: true
+    reason: "All access requires authentication (COSO Principle 12)"
+
+  - action: "financial:*"
+    effect: deny
+    conditions:
+      context_match:
+        role: guest
+    reason: "Guests cannot access financial data"
+
+  # ── Segregation of Duties (COSO Principle 10) ──
+  - action: "financial:approve"
+    effect: deny
+    conditions:
+      context_match:
+        also_prepared: true
+    reason: "Preparer cannot also approve — segregation of duties violation"
+
+  - action: "financial:modify"
+    effect: allow
+    conditions:
+      context_match:
+        role: financial_analyst
+        department: finance
+    reason: "Financial modifications restricted to authorised finance personnel"
+
+  # ── Change Management (COBIT BAI06) ──
+  - action: "config:modify"
+    effect: deny
+    reason: "Configuration changes require change management approval"
+
+  - action: "agent:deploy"
+    effect: deny
+    conditions:
+      context_match:
+        change_approved: false
+    reason: "Agent deployment requires approved change ticket"
+
+  # ── Data Integrity (COSO Principle 13) ──
+  - action: "financial:delete"
+    effect: deny
+    reason: "Financial records cannot be deleted — regulatory retention required"
+
+  - action: "financial:backdate"
+    effect: deny
+    reason: "Backdating financial entries is prohibited"
+
+  - action: "report:generate"
+    effect: allow
+    conditions:
+      context_match:
+        data_validated: true
+    reason: "Reports require validated source data"
+
+  # ── Processing Integrity (COSO Principle 16) ──
+  - action: "calculation:override"
+    effect: deny
+    reason: "Manual override of automated calculations requires dual approval"
+
+limits:
+  max_cost_per_task_usd: 25.00
+  max_steps_per_task: 100
+  max_tool_calls_per_minute: 30
+
+governance:
+  require_transparency_disclosure: true
+  require_human_oversight: true
+  log_inputs: true
+  log_outputs: true
+  dual_approval_required: true
+  data_retention_days: 2555  # 7 years per SOX
+  audit_trail_immutable: true
+  change_management_required: true
+  segregation_of_duties: true
+
+guardrails:
+  pii_detection: true
+  pii_action: redact
+  financial_controls:
+    require_four_eyes: true
+    max_transaction_value_usd: 50000
+    require_approval_above_usd: 10000
+  content_policy:
+    block_patterns:
+      - "\\b\\d{3}-\\d{2}-\\d{4}\\b"       # SSN
+      - "\\b\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{4}\\b"  # Credit card
+  max_output_tokens: 8192

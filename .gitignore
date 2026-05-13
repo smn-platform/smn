@@ -1,0 +1,39 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+
+# Database
+*.db
+
+# Logs
+*.log
+
+# Node
+node_modules/
+package-lock.json
+npm-debug.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+_personal/

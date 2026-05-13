@@ -1,0 +1,55 @@
+# High-risk policy — strict governance for sensitive workloads.
+#
+# Aligned with:
+#   - EU AI Act Art. 9 (risk management)
+#   - EU AI Act Art. 12 (automatic logging)
+#   - EU AI Act Art. 14 (human oversight)
+#   - EU AI Act Art. 15 (accuracy/robustness)
+#   - NIST AI RMF GOVERN, MEASURE, MANAGE functions
+
+name: high_risk
+risk_level: high
+
+frameworks:
+  - eu-ai-act
+  - nist-ai-rmf
+
+rules:
+  # Read operations are allowed
+  - action: "*:read"
+    effect: allow
+  - action: "*:list"
+    effect: allow
+
+  # Write operations require escalation (human approval)
+  - action: "*:write"
+    effect: escalate
+    reason: "Write operations require human approval for high-risk agents"
+  - action: "*:create"
+    effect: escalate
+    reason: "Create operations require human approval for high-risk agents"
+  - action: "*:update"
+    effect: escalate
+    reason: "Update operations require human approval for high-risk agents"
+
+  # Delete operations are denied by default
+  - action: "*:delete"
+    effect: deny
+    reason: "Destructive operations are prohibited for high-risk agents"
+
+  # Everything else requires escalation
+  - action: "*"
+    effect: escalate
+    reason: "Unclassified actions require human approval for high-risk agents"
+
+limits:
+  max_cost_per_task_usd: 2.00
+  max_steps_per_task: 25
+  max_tool_calls_per_minute: 30
+
+governance:
+  require_transparency_disclosure: true
+  require_human_oversight: true
+  log_inputs: true
+  log_outputs: true
+  require_impact_assessment: true

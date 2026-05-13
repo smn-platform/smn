@@ -1,0 +1,69 @@
+services:
+  smn:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      SMN_DATABASE_URL: postgresql+asyncpg://smn:smn@postgres:5432/smn
+      SMN_REDIS_URL: redis://redis:6379/0
+      SMN_TASK_QUEUE_BACKEND: redis://redis:6379/1
+    volumes:
+      - ./policies:/app/policies:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build: .
+    command: celery -A smn.worker worker --loglevel=info --concurrency=4
+    env_file:
+      - .env
+    environment:
+      SMN_DATABASE_URL: postgresql+asyncpg://smn:smn@postgres:5432/smn
+      SMN_REDIS_URL: redis://redis:6379/0
+      SMN_TASK_QUEUE_BACKEND: redis://redis:6379/1
+    volumes:
+      - ./policies:/app/policies:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: smn
+      POSTGRES_PASSWORD: smn
+      POSTGRES_DB: smn
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smn"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  redisdata:

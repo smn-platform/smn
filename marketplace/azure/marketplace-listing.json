@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.mp.microsoft.com/schema/plan-cnab/2022-07-01",
+    "plan": {
+        "identity": "smn-secure-multi-agent-network",
+        "alias": "SMN",
+        "displayName": "SMN — Secure Multi-agent Network"
+    },
+    "artifacts": [
+        {
+            "name": "smn-server",
+            "type": "DockerImage",
+            "image": "smn/smn-server:latest",
+            "ports": [8000]
+        }
+    ],
+    "pricing": {
+        "openConfiguration": {
+            "dimensions": [
+                {
+                    "id": "governed_tasks",
+                    "displayName": "Governed Agent Tasks",
+                    "unitOfMeasure": "per task",
+                    "pricePerPaymentPeriod": 0.05
+                }
+            ]
+        }
+    }
+}

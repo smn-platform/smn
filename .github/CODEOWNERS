@@ -1,0 +1,8 @@
+# Global code owners
+* @freddieley
+
+# Security-sensitive files require explicit review
+src/smn/auth.py @freddieley
+src/smn/middleware/ @freddieley
+src/smn/core/identity.py @freddieley
+legal/ @freddieley

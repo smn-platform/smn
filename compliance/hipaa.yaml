@@ -1,0 +1,112 @@
+# HIPAA Compliance Pack for SMN
+# Health Insurance Portability and Accountability Act (1996)
+#
+# This policy enforces HIPAA Technical Safeguards (45 CFR § 164.312)
+# for AI agents processing Protected Health Information (PHI).
+#
+# Apply with: smn policy apply --file compliance/hipaa.yaml
+
+name: hipaa-compliance
+description: "HIPAA Technical Safeguards for AI agents handling PHI"
+risk_level: high
+version: "1.0"
+framework: hipaa
+applicable_regulations:
+  - "45 CFR § 164.312 — Technical Safeguards"
+  - "45 CFR § 164.308 — Administrative Safeguards"
+  - "45 CFR § 164.310 — Physical Safeguards"
+
+rules:
+  # ── Access Control (§ 164.312(a)) ──
+  - action: "*"
+    effect: allow
+    conditions:
+      context_match:
+        authenticated: true
+    reason: "All access requires authentication (§ 164.312(a)(1))"
+
+  - action: "phi:*"
+    effect: deny
+    conditions:
+      context_match:
+        role: guest
+    reason: "Guests cannot access PHI (§ 164.312(a)(1))"
+
+  # ── Audit Controls (§ 164.312(b)) ──
+  - action: "phi:read"
+    effect: allow
+    conditions:
+      context_match:
+        has_hipaa_training: true
+    reason: "PHI access requires HIPAA training certification"
+
+  - action: "phi:export"
+    effect: deny
+    reason: "PHI export requires explicit authorization and BAA"
+
+  # ── Transmission Security (§ 164.312(e)) ──
+  - action: "http:*"
+    effect: deny
+    conditions:
+      context_match:
+        transport: "http"
+    reason: "PHI must be transmitted over encrypted channels (§ 164.312(e)(1))"
+
+  # ── Person or Entity Authentication (§ 164.312(d)) ──
+  - action: "admin:*"
+    effect: deny
+    conditions:
+      context_match:
+        mfa_verified: false
+    reason: "Administrative actions require MFA (§ 164.312(d))"
+
+  # ── Integrity Controls (§ 164.312(c)) ──
+  - action: "phi:modify"
+    effect: allow
+    conditions:
+      context_match:
+        role: provider
+        has_hipaa_training: true
+    reason: "PHI modification restricted to authorised providers"
+
+  - action: "phi:delete"
+    effect: deny
+    reason: "PHI deletion prohibited — use archival retention instead"
+
+  # ── Minimum Necessary (§ 164.502(b)) ──
+  - action: "phi:bulk_query"
+    effect: deny
+    reason: "Bulk PHI queries violate minimum necessary standard"
+
+limits:
+  max_cost_per_task_usd: 10.00
+  max_steps_per_task: 30
+  max_tool_calls_per_minute: 60
+
+governance:
+  require_transparency_disclosure: true
+  require_human_oversight: true
+  log_inputs: true
+  log_outputs: true
+  require_baa: true
+  data_retention_days: 2190  # 6 years per HIPAA requirement
+  encryption_required: true
+  audit_trail_immutable: true
+
+guardrails:
+  pii_detection: true
+  pii_action: redact
+  phi_categories:
+    - patient_name
+    - date_of_birth
+    - social_security_number
+    - medical_record_number
+    - health_plan_beneficiary
+    - diagnosis
+    - treatment
+    - lab_results
+  content_policy:
+    block_patterns:
+      - "\\b\\d{3}-\\d{2}-\\d{4}\\b"  # SSN
+      - "\\b[A-Z]{2}\\d{7}\\b"         # MRN patterns
+  max_output_tokens: 4096

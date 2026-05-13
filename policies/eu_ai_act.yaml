@@ -1,0 +1,57 @@
+# EU AI Act alignment policy — maps obligations to controls.
+#
+# Timeline (as of April 2026):
+#   Feb 2, 2025:  Prohibited practices in effect (Art. 5)
+#   Aug 2, 2025:  GPAI obligations + transparency (Art. 51-56, Art. 52)
+#   Aug 2, 2026:  High-risk obligations begin (Art. 6-15, 26-27)
+#   Aug 2, 2027:  Full enforcement including Annex I high-risk systems
+#
+# This policy enforces the controls needed for LIMITED-risk AI systems
+# under the EU AI Act.  For HIGH-risk, use high_risk.yaml instead.
+
+name: eu_ai_act
+risk_level: limited
+
+frameworks:
+  - eu-ai-act
+
+rules:
+  # Art. 5: Prohibited practices — these actions are never allowed
+  - action: "biometric:identify"
+    effect: deny
+    reason: "EU AI Act Art. 5(1)(d) — real-time biometric identification prohibited"
+  - action: "social:score"
+    effect: deny
+    reason: "EU AI Act Art. 5(1)(c) — social scoring prohibited"
+  - action: "emotion:infer_workplace"
+    effect: deny
+    reason: "EU AI Act Art. 5(1)(f) — emotion inference in workplace prohibited"
+
+  # Allow general operations with transparency
+  - action: "*:read"
+    effect: allow
+  - action: "*:write"
+    effect: allow
+
+  # Default: allow for limited-risk
+  - action: "*"
+    effect: allow
+
+limits:
+  max_cost_per_task_usd: 5.00
+  max_steps_per_task: 50
+  max_tool_calls_per_minute: 120
+
+governance:
+  # Art. 52: Transparency — must disclose AI interaction
+  require_transparency_disclosure: true
+
+  # Art. 14: Human oversight — not required for limited-risk
+  require_human_oversight: false
+
+  # Art. 12: Logging — always enabled
+  log_inputs: true
+  log_outputs: true
+
+  # Impact assessment — not required for limited-risk
+  require_impact_assessment: false

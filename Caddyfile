@@ -1,0 +1,43 @@
+{
+	# Global options
+	email admin@leylabs.dev
+}
+
+# Reverse proxy for the SMN API
+api.leylabs.dev {
+	# Rate limiting headers forwarded
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		-Server
+	}
+
+	# Health check endpoint (no auth)
+	handle /api/v1/health {
+		reverse_proxy smn:8000
+	}
+
+	# All API routes
+	handle /api/* {
+		reverse_proxy smn:8000
+	}
+
+	# Landing page
+	handle / {
+		reverse_proxy smn:8000
+	}
+
+	# Block everything else
+	handle {
+		respond "Not Found" 404
+	}
+
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 100MiB
+			roll_keep 5
+		}
+	}
+}

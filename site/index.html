@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMN — Secure Multi-agent Network</title>
+  <meta name="description" content="Enterprise-grade AI agent orchestration platform with built-in security, compliance, and observability. Deploy autonomous agents that governments and enterprises trust.">
+  <meta name="keywords" content="AI agents, multi-agent, orchestration, enterprise AI, secure AI, autonomous agents, agent framework">
+  <link rel="canonical" href="https://leylabs.dev">
+  <link rel="icon" type="image/svg+xml" href="./static/favicon.svg">
+  <meta property="og:title" content="SMN — Secure Multi-agent Network">
+  <meta property="og:description" content="Enterprise-grade AI agent orchestration with built-in security, compliance, and observability.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://leylabs.dev">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #06080d;
+      --color-surface: #0c1018;
+      --color-surface-2: #111827;
+      --color-border: #1a2235;
+      --color-border-hover: #2d3a52;
+      --color-primary: #3b82f6;
+      --color-primary-hover: #2563eb;
+      --color-primary-glow: rgba(59,130,246,0.25);
+      --color-accent: #10b981;
+      --color-accent-glow: rgba(16,185,129,0.2);
+      --color-amber: #f59e0b;
+      --color-amber-glow: rgba(245,158,11,0.15);
+      --color-text: #f1f5f9;
+      --color-muted: #8b9ec2;
+      --color-dim: #4a5a7a;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --max-width: 1140px;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+    a { color: var(--color-primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--color-primary-hover); }
+
+    /* ─── Scroll reveal ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(6,8,13,0.72);
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 2rem;
+      transition: background 0.3s;
+    }
+    .nav-inner {
+      max-width: var(--max-width); margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-size: 1.25rem; font-weight: 800; letter-spacing: -0.03em;
+      color: var(--color-text); display: flex; align-items: center; gap: 0.5rem;
+    }
+    .logo-mark {
+      width: 28px; height: 28px;
+    }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      color: var(--color-muted); font-size: 0.875rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--color-text); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.4rem; border-radius: 8px; font-weight: 600;
+      font-size: 0.875rem; transition: all 0.2s var(--ease-out-expo);
+      border: none; cursor: pointer; text-decoration: none;
+      position: relative;
+    }
+    .btn-primary {
+      background: var(--color-primary); color: #fff;
+      box-shadow: 0 0 0 0 var(--color-primary-glow);
+    }
+    .btn-primary:hover {
+      background: var(--color-primary-hover); color: #fff;
+      box-shadow: 0 0 24px 4px var(--color-primary-glow);
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: rgba(255,255,255,0.04); color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+    .btn-outline:hover {
+      border-color: var(--color-border-hover);
+      background: rgba(255,255,255,0.07);
+      color: var(--color-text);
+    }
+    .btn-glow {
+      background: linear-gradient(135deg, var(--color-primary), #6366f1);
+      color: #fff; font-size: 1rem; padding: 0.85rem 2rem; border-radius: 10px;
+      box-shadow: 0 0 32px 8px rgba(99,102,241,0.25);
+    }
+    .btn-glow:hover {
+      box-shadow: 0 0 48px 12px rgba(99,102,241,0.35);
+      transform: translateY(-2px);
+      color: #fff;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      position: relative;
+      padding: 11rem 2rem 5rem;
+      text-align: center;
+      overflow: hidden;
+    }
+    #hero-canvas {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-gradient {
+      position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 900px;
+      background: radial-gradient(circle, rgba(59,130,246,0.13) 0%, rgba(99,102,241,0.06) 40%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .hero-gradient-2 {
+      position: absolute; top: 10%; left: 20%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+      animation: float-slow 8s ease-in-out infinite;
+    }
+    @keyframes float-slow {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, -20px); }
+    }
+    .hero-content {
+      position: relative; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.35rem 1rem 0.35rem 0.5rem;
+      border-radius: 99px; font-size: 0.8rem; font-weight: 500;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+      color: var(--color-accent); margin-bottom: 2rem;
+    }
+    .hero-badge-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--color-accent);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 6vw, 4.5rem);
+      font-weight: 900; letter-spacing: -0.04em;
+      line-height: 1.05; margin-bottom: 1.5rem;
+    }
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, #60a5fa 0%, var(--color-accent) 50%, #34d399 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.2rem; color: var(--color-muted);
+      max-width: 560px; margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+    .hero-buttons {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 4rem;
+    }
+
+    /* ─── Terminal ─── */
+    .terminal {
+      margin: 0 auto; max-width: 620px; text-align: left;
+      background: rgba(12,16,24,0.9);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      box-shadow: 0 24px 80px -12px rgba(0,0,0,0.6),
+                  0 0 0 1px rgba(255,255,255,0.04),
+                  inset 0 1px 0 rgba(255,255,255,0.04);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+    .terminal-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .terminal-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+    }
+    .terminal-dot.red { background: #ff5f57; }
+    .terminal-dot.yellow { background: #ffbd2e; }
+    .terminal-dot.green { background: #28c840; }
+    .terminal-title {
+      flex: 1; text-align: center; font-size: 0.75rem;
+      color: var(--color-dim); font-family: var(--font-sans);
+    }
+    .terminal-body {
+      padding: 1.25rem 1.5rem;
+      font-family: var(--font-mono); font-size: 0.82rem;
+      line-height: 1.8; min-height: 180px;
+    }
+    .terminal-line {
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.3s, transform 0.3s;
+      white-space: nowrap;
+    }
+    .terminal-line.visible {
+      opacity: 1; transform: translateY(0);
+    }
+    .t-prompt { color: var(--color-accent); }
+    .t-cmd { color: var(--color-text); }
+    .t-flag { color: var(--color-primary); }
+    .t-str { color: var(--color-amber); }
+    .t-comment { color: var(--color-dim); }
+    .t-output { color: var(--color-muted); }
+    .cursor {
+      display: inline-block; width: 8px; height: 17px;
+      background: var(--color-accent);
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom; margin-left: 2px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ─── Numbers Strip ─── */
+    .numbers {
+      padding: 4rem 2rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: var(--color-surface);
+    }
+    .numbers-inner {
+      max-width: var(--max-width); margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+      text-align: center;
+    }
+    .number-item .number-value {
+      font-size: 2.75rem; font-weight: 800; letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--color-text) 60%, var(--color-muted));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .number-item .number-label {
+      font-size: 0.85rem; color: var(--color-muted); margin-top: 0.25rem;
+      font-weight: 500;
+    }
+
+    /* ─── Sections ─── */
+    section { padding: 6rem 2rem; }
+    .container { max-width: var(--max-width); margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.14em; color: var(--color-primary);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em;
+      margin-bottom: 1rem; line-height: 1.15;
+    }
+    .section-desc {
+      color: var(--color-muted); font-size: 1.05rem;
+      max-width: 560px; margin-bottom: 3.5rem;
+      line-height: 1.7;
+    }
+
+    /* ─── Features Grid ─── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+    }
+    .feature-card {
+      background: var(--color-surface);
+      padding: 2rem 2.25rem;
+      position: relative;
+      transition: background 0.3s;
+    }
+    .feature-card::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59,130,246,0.06), transparent 60%);
+      pointer-events: none; opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover::after { opacity: 1; }
+    .feature-card:hover { background: rgba(12,16,24,0.95); }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem; margin-bottom: 1rem;
+      background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.12);
+    }
+    .feature-card h3 {
+      font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    .feature-card p { color: var(--color-muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ─── Architecture ─── */
+    .arch-section {
+      background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-bg) 100%);
+    }
+    .arch-visual {
+      position: relative;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+    }
+    .arch-connector {
+      position: absolute;
+      top: 50%; left: 0; right: 0;
+      height: 2px; z-index: 0;
+      background: linear-gradient(90deg,
+        var(--color-primary) 0%, var(--color-primary) 33%,
+        var(--color-accent) 33%, var(--color-accent) 66%,
+        var(--color-amber) 66%, var(--color-amber) 100%);
+      opacity: 0.15;
+    }
+    .plane {
+      position: relative; z-index: 1;
+      border: 1px solid var(--color-border); border-radius: 14px;
+      padding: 2.25rem 1.75rem; text-align: center;
+      background: var(--color-surface);
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+    .plane:hover { transform: translateY(-4px); }
+    .plane h3 { font-size: 1.05rem; margin-bottom: 0.5rem; font-weight: 600; }
+    .plane p { color: var(--color-muted); font-size: 0.88rem; line-height: 1.6; }
+    .plane.control {
+      border-color: rgba(59,130,246,0.3);
+    }
+    .plane.control:hover {
+      box-shadow: 0 8px 40px -8px var(--color-primary-glow);
+    }
+    .plane.execution {
+      border-color: rgba(16,185,129,0.3);
+    }
+    .plane.execution:hover {
+      box-shadow: 0 8px 40px -8px var(--color-accent-glow);
+    }
+    .plane.trust {
+      border-color: rgba(245,158,11,0.3);
+    }
+    .plane.trust:hover {
+      box-shadow: 0 8px 40px -8px var(--color-amber-glow);
+    }
+    .plane-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.14em; padding: 0.3rem 0.85rem;
+      border-radius: 99px; display: inline-block; margin-bottom: 1.25rem;
+    }
+    .control .plane-label { background: rgba(59,130,246,0.12); color: var(--color-primary); }
+    .execution .plane-label { background: rgba(16,185,129,0.12); color: var(--color-accent); }
+    .trust .plane-label { background: rgba(245,158,11,0.12); color: var(--color-amber); }
+    .plane-icon {
+      font-size: 1.75rem; margin-bottom: 0.75rem;
+    }
+
+    /* ─── Pricing ─── */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+    .price-card {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: 16px; padding: 2.5rem 2rem;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .price-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-border-hover);
+    }
+    .price-card.featured {
+      border-color: var(--color-primary); position: relative;
+      background: linear-gradient(180deg, rgba(59,130,246,0.04) 0%, var(--color-surface) 60%);
+    }
+    .price-card.featured:hover {
+      box-shadow: 0 16px 64px -16px var(--color-primary-glow);
+    }
+    .price-card.featured::before {
+      content: 'Most Popular'; position: absolute; top: -13px; left: 50%;
+      transform: translateX(-50%); 
+      background: linear-gradient(135deg, var(--color-primary), #6366f1);
+      color: #fff; font-size: 0.72rem; font-weight: 700;
+      padding: 0.3rem 1rem; border-radius: 99px;
+      letter-spacing: 0.04em;
+    }
+    .price-card h3 { font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 600; }
+    .price-amount {
+      font-size: 3rem; font-weight: 900; margin-bottom: 0.2rem;
+      letter-spacing: -0.04em;
+    }
+    .price-period { color: var(--color-muted); font-size: 0.875rem; margin-bottom: 2rem; }
+    .price-features { list-style: none; margin-bottom: 2.25rem; }
+    .price-features li {
+      padding: 0.45rem 0; color: var(--color-muted);
+      font-size: 0.9rem; display: flex; align-items: center; gap: 0.6rem;
+    }
+    .price-features li::before {
+      content: '✓'; color: var(--color-accent); font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    /* ─── Trust ─── */
+    .trust-section {
+      background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-surface) 50%, var(--color-bg) 100%);
+    }
+    .trust-badges {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 2rem; margin-top: 3rem;
+    }
+    .badge {
+      text-align: center; color: var(--color-muted); font-size: 0.82rem;
+      padding: 1.5rem 1rem;
+      border-radius: 14px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      transition: border-color 0.3s, transform 0.3s;
+      line-height: 1.5;
+    }
+    .badge:hover { border-color: var(--color-border-hover); transform: translateY(-2px); }
+    .badge-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+
+    /* ─── CTA ─── */
+    .cta {
+      text-align: center; padding: 8rem 2rem;
+      position: relative; overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute; bottom: -200px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(99,102,241,0.05) 40%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-content { position: relative; z-index: 1; }
+    .cta h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900; margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+    }
+    .cta p { color: var(--color-muted); font-size: 1.15rem; margin-bottom: 2.5rem; }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 3rem 2rem; color: var(--color-dim); font-size: 0.82rem;
+    }
+    .footer-inner {
+      max-width: var(--max-width); margin: 0 auto;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem;
+      align-items: center;
+    }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--color-dim); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--color-text); }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .arch-visual { grid-template-columns: 1fr; }
+      .arch-connector { display: none; }
+      .numbers-inner { grid-template-columns: repeat(2, 1fr); }
+      .nav-links { display: none; }
+      .hero { padding: 8rem 1.5rem 4rem; }
+      .hero h1 { font-size: 2.5rem; }
+      .terminal { margin: 0 -0.5rem; border-radius: 10px; }
+      .trust-badges { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .numbers-inner { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+      .hero-buttons { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <svg class="logo-mark" viewBox="0 0 128 128" width="28" height="28" aria-hidden="true">
+        <rect fill="#111827" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round" x="48" y="16" width="44" height="44" rx="12" transform="rotate(45 70 38)"/>
+        <rect fill="#111827" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round" x="34" y="66" width="48" height="48" rx="13" transform="rotate(45 58 90)"/>
+      </svg>
+      SMN
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://github.com/leylabs/smn" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://docs.leylabs.dev" target="_blank" rel="noopener">Docs</a>
+      <a href="#get-started" class="btn btn-primary">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-gradient"></div>
+  <div class="hero-gradient-2"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge reveal">
+      <div class="hero-badge-dot"></div>
+      Open-source &amp; production-ready
+    </div>
+    <h1 class="reveal reveal-delay-1">
+      AI Agents That<br>
+      <span class="gradient">Governments Trust</span>
+    </h1>
+    <p class="hero-sub reveal reveal-delay-2">
+      Enterprise-grade multi-agent orchestration with built-in security,
+      compliance, and observability. From prototype to production in minutes.
+    </p>
+    <div class="hero-buttons reveal reveal-delay-3">
+      <a href="#get-started" class="btn btn-glow">Get Started Free</a>
+      <a href="https://docs.leylabs.dev" class="btn btn-outline" target="_blank" rel="noopener">
+        Read the Docs &rarr;
+      </a>
+    </div>
+
+    <!-- Animated Terminal -->
+    <div class="terminal reveal" id="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green"></div>
+        <div class="terminal-title">bash — smn</div>
+        <div style="width: 36px;"></div>
+      </div>
+      <div class="terminal-body" id="terminal-body">
+        <div class="terminal-line" data-delay="300">
+          <span class="t-comment"># Install and launch in 30 seconds</span>
+        </div>
+        <div class="terminal-line" data-delay="800">
+          <span class="t-prompt">$</span> <span class="t-cmd">pip install</span> <span class="t-flag">smn</span>
+        </div>
+        <div class="terminal-line" data-delay="1800">
+          <span class="t-prompt">$</span> <span class="t-cmd">smn init</span> <span class="t-flag">&amp;&amp;</span> <span class="t-cmd">smn serve</span>
+        </div>
+        <div class="terminal-line" data-delay="2600">
+          <span class="t-output">&#x2714; Server running at http://localhost:8000</span>
+        </div>
+        <div class="terminal-line" data-delay="3600"><br></div>
+        <div class="terminal-line" data-delay="3800">
+          <span class="t-comment"># Create an agent and run a task</span>
+        </div>
+        <div class="terminal-line" data-delay="4400">
+          <span class="t-prompt">$</span> <span class="t-cmd">smn agent create</span> <span class="t-flag">--name</span> <span class="t-str">"analyst"</span> <span class="t-flag">--model</span> <span class="t-str">anthropic/claude-sonnet</span>
+        </div>
+        <div class="terminal-line" data-delay="5400">
+          <span class="t-output">&#x2714; Agent "analyst" created (id: ag_7xk2m)</span>
+        </div>
+        <div class="terminal-line" data-delay="6200">
+          <span class="t-prompt">$</span> <span class="t-cmd">smn task run</span> <span class="t-flag">--agent</span> <span class="t-str">analyst</span> <span class="t-flag">--input</span> <span class="t-str">"Summarise Q4 report"</span>
+        </div>
+        <div class="terminal-line" data-delay="7200">
+          <span class="t-output">&#x2714; Task tk_9f3a running... streaming results</span><span class="cursor"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Numbers Strip -->
+<section class="numbers">
+  <div class="numbers-inner reveal">
+    <div class="number-item">
+      <div class="number-value" data-target="304">0</div>
+      <div class="number-label">Tests Passing</div>
+    </div>
+    <div class="number-item">
+      <div class="number-value" data-target="32">0</div>
+      <div class="number-label">API Endpoints</div>
+    </div>
+    <div class="number-item">
+      <div class="number-value" data-target="2">0</div>
+      <div class="number-label">Official SDKs</div>
+    </div>
+    <div class="number-item">
+      <div class="number-value" data-target="3">0</div>
+      <div class="number-label">Security Planes</div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="container">
+    <div class="section-label reveal">Capabilities</div>
+    <h2 class="section-title reveal">Everything You Need for<br>Production AI</h2>
+    <p class="section-desc reveal">
+      Purpose-built for enterprise AI agent deployment.
+      Every feature designed to keep autonomous agents safe, observable, and compliant.
+    </p>
+    <div class="features-grid reveal" id="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>ABAC Policy Engine</h3>
+        <p>Attribute-based access control with tenant-scoped isolation. Define who can do what, on which resources, under what conditions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Immutable Audit Trail</h3>
+        <p>Every agent action logged with cryptographic integrity. Full traceability from task submission to completion.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Runtime Guardrails</h3>
+        <p>Content filtering, cost limits, and execution constraints that prevent agents from going rogue — before damage is done.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔌</div>
+        <h3>MCP Tool Integration</h3>
+        <p>Connect agents to any external system via the Model Context Protocol. Extensible connector architecture.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💾</div>
+        <h3>Checkpoint &amp; Recovery</h3>
+        <p>Long-running tasks survive failures. Automatic state persistence and recovery with configurable strategies.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Persistent Memory</h3>
+        <p>Agents remember across sessions. Scoped memory with semantic search and configurable retention policies.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤝</div>
+        <h3>Multi-Agent Orchestration</h3>
+        <p>Coordinate teams of specialised agents. Sequential, parallel, and DAG-based execution patterns.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📡</div>
+        <h3>Real-Time Streaming</h3>
+        <p>Server-Sent Events for live task progress. Watch agents think, decide, and act in real-time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Kill Switch</h3>
+        <p>Emergency halt for all agent execution. One API call stops everything — instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>OpenTelemetry Native</h3>
+        <p>Distributed tracing, metrics, and logs out of the box. Plug into Prometheus, Grafana, Jaeger, or any OTLP backend.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>LLM Provider Abstraction</h3>
+        <p>Switch between OpenAI, Anthropic, Azure, or any provider without code changes. Built-in retry, fallback, and circuit breaker.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <h3>Usage-Based Billing</h3>
+        <p>Stripe-integrated metering, subscription management, and per-task invoicing. Multi-tier pricing out of the box.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section id="architecture" class="arch-section">
+  <div class="container">
+    <div class="section-label reveal">Architecture</div>
+    <h2 class="section-title reveal">Three-Plane Design</h2>
+    <p class="section-desc reveal">
+      Inspired by Kubernetes' control/data plane separation.
+      Security is not bolted on — it's structural.
+    </p>
+    <div class="arch-visual reveal">
+      <div class="arch-connector"></div>
+      <div class="plane control">
+        <div class="plane-label">Control Plane</div>
+        <div class="plane-icon">🎛️</div>
+        <h3>API &amp; CLI</h3>
+        <p>REST API, CLI, SSE streaming, authentication, rate limiting, and request routing.</p>
+      </div>
+      <div class="plane execution">
+        <div class="plane-label">Execution Plane</div>
+        <div class="plane-icon">⚙️</div>
+        <h3>Agent Runtime</h3>
+        <p>Task execution, LLM integration, tool calling, memory, checkpointing, and orchestration.</p>
+      </div>
+      <div class="plane trust">
+        <div class="plane-label">Trust Plane</div>
+        <div class="plane-icon">🔐</div>
+        <h3>Security &amp; Compliance</h3>
+        <p>Policy engine, identity, audit trail, guardrails, and emergency kill switch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-label reveal">Pricing</div>
+    <h2 class="section-title reveal">Simple, Transparent Pricing</h2>
+    <p class="section-desc reveal">
+      Start free with the open-source core. Scale with Pro when you're ready.
+    </p>
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <h3>Starter</h3>
+        <div class="price-amount">£0</div>
+        <div class="price-period">Free forever · open-source</div>
+        <ul class="price-features">
+          <li>Unlimited agents</li>
+          <li>1,000 tasks / month</li>
+          <li>Community support</li>
+          <li>Full audit trail</li>
+          <li>All guardrails &amp; security</li>
+          <li>Python &amp; TypeScript SDKs</li>
+        </ul>
+        <a href="#get-started" class="btn btn-outline" style="width:100%; justify-content:center;">Get Started</a>
+      </div>
+      <div class="price-card featured reveal reveal-delay-1">
+        <h3>Pro</h3>
+        <div class="price-amount">£199</div>
+        <div class="price-period">per month</div>
+        <ul class="price-features">
+          <li>Unlimited agents</li>
+          <li>10,000 tasks / month</li>
+          <li>SSO / SAML integration</li>
+          <li>Compliance exports</li>
+          <li>Email support (48h SLA)</li>
+          <li>Multi-tenant admin</li>
+        </ul>
+        <a href="#get-started" class="btn btn-primary" style="width:100%; justify-content:center;">Get Started</a>
+      </div>
+      <div class="price-card reveal reveal-delay-2">
+        <h3>Enterprise</h3>
+        <div class="price-amount">Custom</div>
+        <div class="price-period">contact sales</div>
+        <ul class="price-features">
+          <li>Unlimited agents</li>
+          <li>Unlimited tasks</li>
+          <li>Dedicated support (4h SLA)</li>
+          <li>99.9% uptime SLA</li>
+          <li>Data residency controls</li>
+          <li>Custom compliance packs</li>
+          <li>On-premise deployment</li>
+          <li>SSO / SAML integration</li>
+        </ul>
+        <a href="mailto:hello@leylabs.dev" class="btn btn-outline" style="width:100%; justify-content:center;">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust -->
+<section class="trust-section">
+  <div class="container" style="text-align: center;">
+    <div class="section-label reveal">Trust &amp; Compliance</div>
+    <h2 class="section-title reveal">Built for Regulated Industries</h2>
+    <p class="section-desc reveal" style="margin-left:auto; margin-right:auto;">
+      Designed from the ground up to meet the security and compliance
+      requirements of government, financial services, and healthcare.
+    </p>
+    <div class="trust-badges reveal">
+      <div class="badge">
+        <div class="badge-icon">&#x1F1EA;&#x1F1FA;</div>
+        <div>EU AI Act<br>Aligned</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">🔐</div>
+        <div>Encryption<br>at Rest &amp; Transit</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">📋</div>
+        <div>Full<br>Audit Trail</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">🛡️</div>
+        <div>RBAC &amp;<br>Tenant Isolation</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">🏛️</div>
+        <div>Compliance<br>Ready</div>
+      </div>
+      <div class="badge">
+        <div class="badge-icon">🌐</div>
+        <div>Open-Source<br>Core</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="get-started">
+  <div class="cta-glow"></div>
+  <div class="cta-content reveal">
+    <h2>Ready to Ship Secure AI?</h2>
+    <p>Get started in under 5 minutes. No credit card required.</p>
+    <div class="hero-buttons">
+      <a href="https://github.com/leylabs/smn" class="btn btn-glow" target="_blank" rel="noopener">
+        View on GitHub &rarr;
+      </a>
+      <a href="mailto:hello@leylabs.dev" class="btn btn-outline">Contact Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div>© 2026 Ley Labs Ltd. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="https://github.com/leylabs/smn" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://discord.gg/leylabs" target="_blank" rel="noopener">Discord</a>
+      <a href="mailto:hello@leylabs.dev">Contact</a>
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ─── Scroll Reveal ─── */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ─── Terminal Typing Animation ─── */
+  let terminalStarted = false;
+  const terminalObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !terminalStarted) {
+        terminalStarted = true;
+        const lines = document.querySelectorAll('.terminal-line');
+        lines.forEach(line => {
+          const delay = parseInt(line.dataset.delay, 10) || 0;
+          setTimeout(() => line.classList.add('visible'), delay);
+        });
+        terminalObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const terminal = document.getElementById('terminal');
+  if (terminal) terminalObserver.observe(terminal);
+
+  /* ─── Animated Number Counter ─── */
+  let numbersStarted = false;
+  const numbersObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !numbersStarted) {
+        numbersStarted = true;
+        document.querySelectorAll('.number-value').forEach(el => {
+          const target = parseInt(el.dataset.target, 10);
+          const duration = 1600;
+          const start = performance.now();
+          function animate(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 4);
+            el.textContent = Math.round(target * eased);
+            if (progress < 1) requestAnimationFrame(animate);
+          }
+          requestAnimationFrame(animate);
+        });
+        numbersObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  const numbersSection = document.querySelector('.numbers-inner');
+  if (numbersSection) numbersObserver.observe(numbersSection);
+
+  /* ─── Feature Card Mouse Glow ─── */
+  const grid = document.getElementById('features-grid');
+  if (grid) {
+    grid.addEventListener('mousemove', (e) => {
+      const cards = grid.querySelectorAll('.feature-card');
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', x + 'px');
+        card.style.setProperty('--mouse-y', y + 'px');
+      });
+    });
+  }
+
+  /* ─── Hero Canvas — Particle Network ─── */
+  const canvas = document.getElementById('hero-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let width, height, particles, animId;
+  const PARTICLE_COUNT = 60;
+  const CONNECTION_DIST = 150;
+  const mouse = { x: -1000, y: -1000 };
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = canvas.parentElement.getBoundingClientRect();
+    width = rect.width;
+    height = rect.height;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function createParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 2 + 1,
+        hue: Math.random() > 0.5 ? 217 : 160
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECTION_DIST) {
+          const alpha = (1 - dist / CONNECTION_DIST) * 0.12;
+          ctx.strokeStyle = 'rgba(59,130,246,' + alpha + ')';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw particles and mouse connections
+    particles.forEach(p => {
+      // Mouse interaction
+      const mdx = mouse.x - p.x;
+      const mdy = mouse.y - p.y;
+      const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+      if (mDist < 200) {
+        const alpha = (1 - mDist / 200) * 0.25;
+        ctx.strokeStyle = 'rgba(16,185,129,' + alpha + ')';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.stroke();
+      }
+
+      // Draw particle
+      const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+      const hsl = p.hue === 217 ? '59,130,246' : '16,185,129';
+      gradient.addColorStop(0, 'rgba(' + hsl + ',0.6)');
+      gradient.addColorStop(1, 'rgba(' + hsl + ',0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(' + hsl + ',0.8)';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Move
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > width) p.vx *= -1;
+      if (p.y < 0 || p.y > height) p.vy *= -1;
+    });
+
+    animId = requestAnimationFrame(draw);
+  }
+
+  canvas.parentElement.addEventListener('mousemove', (e) => {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+  canvas.parentElement.addEventListener('mouseleave', () => {
+    mouse.x = -1000;
+    mouse.y = -1000;
+  });
+
+  window.addEventListener('resize', () => {
+    resize();
+    createParticles();
+  });
+
+  resize();
+  createParticles();
+  draw();
+
+  /* ─── Nav blur on scroll ─── */
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      nav.style.background = 'rgba(6,8,13,0.88)';
+    } else {
+      nav.style.background = 'rgba(6,8,13,0.72)';
+    }
+  }, { passive: true });
+
+})();
+</script>
+
+</body>
+</html>

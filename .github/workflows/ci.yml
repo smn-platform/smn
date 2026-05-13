@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Ruff check
+        run: ruff check src/ tests/
+
+      - name: Ruff format check
+        run: ruff format --check src/ tests/
+
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest --tb=short -q
+
+      - name: Run Python SDK tests
+        run: pytest sdks/python/tests/ --tb=short -q
+
+  test-typescript:
+    name: TypeScript SDK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: sdks/typescript
+        run: npm ci
+
+      - name: Type check
+        working-directory: sdks/typescript
+        run: npx tsc --noEmit
+
+      - name: Run tests
+        working-directory: sdks/typescript
+        run: npx vitest run
+
+  security:
+    name: Security scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev]"
+          pip install bandit[toml] safety
+
+      - name: Bandit (SAST)
+        run: bandit -r src/smn/ -c pyproject.toml -f json -o bandit-report.json || true
+
+      - name: Bandit summary
+        run: bandit -r src/smn/ -c pyproject.toml -ll
+
+      - name: Safety (dependency CVEs)
+        run: safety check --output json || true
+        continue-on-error: true
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: bandit-report.json
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t smn:test .
+
+      - name: Verify image starts
+        run: |
+          docker run -d --name smn-test \
+            -e SMN_SECRET_KEY=ci-test-key \
+            -e SMN_DATABASE_URL=sqlite+aiosqlite:///./smn.db \
+            smn:test
+          sleep 5
+          docker logs smn-test
+          docker stop smn-test

@@ -1,0 +1,137 @@
+{
+    "schemaVersion": "1.0",
+    "product": {
+        "name": "smn-secure-multi-agent-network",
+        "displayName": "SMN — Secure Multi-agent Network",
+        "description": "Deploy, govern, and scale AI agents safely with full audit trails, policy enforcement, and compliance reporting. Built for enterprises that need to move from AI pilot to governed production safely.",
+        "tagline": "The governance layer for production AI agents.",
+        "categories": ["AI & Machine Learning", "Security", "DevOps"],
+        "supportInfo": {
+            "description": "Email support included. Enterprise tier includes dedicated TAM.",
+            "url": "https://smn.dev/support",
+            "email": "support@smn.dev"
+        },
+        "documentationUrl": "https://smn.dev/docs",
+        "iconUri": "https://smn.dev/assets/icon.png"
+    },
+    "deploymentSpec": {
+        "kubernetes": {
+            "images": [
+                {
+                    "name": "smn-server",
+                    "image": "gcr.io/smn-platform/smn-server:latest"
+                }
+            ],
+            "deploymentSpec": {
+                "apiVersion": "apps/v1",
+                "kind": "Deployment",
+                "metadata": {
+                    "name": "smn-server"
+                },
+                "spec": {
+                    "replicas": 1,
+                    "selector": {
+                        "matchLabels": {
+                            "app": "smn-server"
+                        }
+                    },
+                    "template": {
+                        "metadata": {
+                            "labels": {
+                                "app": "smn-server"
+                            }
+                        },
+                        "spec": {
+                            "securityContext": {
+                                "runAsNonRoot": true,
+                                "runAsUser": 1000
+                            },
+                            "containers": [
+                                {
+                                    "name": "smn-server",
+                                    "image": "gcr.io/smn-platform/smn-server:latest",
+                                    "ports": [
+                                        {
+                                            "containerPort": 8000,
+                                            "protocol": "TCP"
+                                        }
+                                    ],
+                                    "env": [
+                                        {
+                                            "name": "SMN_HOST",
+                                            "value": "0.0.0.0"
+                                        },
+                                        {
+                                            "name": "SMN_PORT",
+                                            "value": "8000"
+                                        }
+                                    ],
+                                    "resources": {
+                                        "requests": {
+                                            "cpu": "500m",
+                                            "memory": "512Mi"
+                                        },
+                                        "limits": {
+                                            "cpu": "2000m",
+                                            "memory": "2Gi"
+                                        }
+                                    },
+                                    "livenessProbe": {
+                                        "httpGet": {
+                                            "path": "/api/v1/health",
+                                            "port": 8000
+                                        },
+                                        "initialDelaySeconds": 10,
+                                        "periodSeconds": 30
+                                    },
+                                    "readinessProbe": {
+                                        "httpGet": {
+                                            "path": "/api/v1/health",
+                                            "port": 8000
+                                        },
+                                        "initialDelaySeconds": 5,
+                                        "periodSeconds": 10
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "serviceSpec": {
+                "apiVersion": "v1",
+                "kind": "Service",
+                "metadata": {
+                    "name": "smn-server"
+                },
+                "spec": {
+                    "type": "ClusterIP",
+                    "ports": [
+                        {
+                            "port": 8000,
+                            "targetPort": 8000,
+                            "protocol": "TCP"
+                        }
+                    ],
+                    "selector": {
+                        "app": "smn-server"
+                    }
+                }
+            }
+        }
+    },
+    "pricing": {
+        "model": "usage",
+        "dimensions": [
+            {
+                "name": "governed_tasks",
+                "displayName": "Governed Agent Tasks",
+                "description": "Number of governed agent task executions through the 5-gate policy loop",
+                "unit": "tasks",
+                "pricePerUnit": {
+                    "USD": 0.05
+                }
+            }
+        ]
+    }
+}
