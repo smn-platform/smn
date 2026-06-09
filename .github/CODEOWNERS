@@ -1,8 +1,8 @@
 # Global code owners
-* @freddieley
+* @smn-platform/maintainers
 
 # Security-sensitive files require explicit review
-src/smn/auth.py @freddieley
-src/smn/middleware/ @freddieley
-src/smn/core/identity.py @freddieley
-legal/ @freddieley
+src/smn/auth.py @smn-platform/maintainers
+src/smn/middleware/ @smn-platform/maintainers
+src/smn/core/identity.py @smn-platform/maintainers
+legal/ @smn-platform/maintainers

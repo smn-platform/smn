@@ -3,9 +3,6 @@
 **Effective Date:** 19 April 2026
 **Last Updated:** 19 April 2026
 
-> **IMPORTANT:** This document is a template. Have it reviewed by qualified legal
-> counsel before publication.
-
 ---
 
 ## 1. Introduction

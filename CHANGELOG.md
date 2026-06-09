@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2026-06-09
+
+### Added
+- Root `SECURITY.md` with GitHub private vulnerability reporting link
+- `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1)
+- GitHub issue templates (bug report, feature request)
+- GitHub pull request template
+- `[project.urls]` in `pyproject.toml` (Homepage, Docs, Repo, Issues, Changelog)
+
+### Changed
+- README: added CI, PyPI, Python, and license badges
+- README: quickstart now uses `pip install smn` instead of editable install
+- CODEOWNERS: migrated from personal handle to `@smn-platform/maintainers` team
+- `community/SECURITY.md`: corrected contact email to `security@leylabs.dev`
+- Legal documents: removed draft template disclaimers
+- `.gitignore`: restored `package-lock.json` tracking for TypeScript SDK reproducibility
+- Version bumped to `0.1.3` across all packages and SDKs
+
+### Removed
+- Stale `site/index.html.bak`
+
 ## [0.1.2] - 2026-04-19
 
 ### Added

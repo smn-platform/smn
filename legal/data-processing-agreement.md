@@ -3,9 +3,6 @@
 **Effective Date:** 19 April 2026
 **Last Updated:** 19 April 2026
 
-> **IMPORTANT:** This document is a template. Have it reviewed by qualified legal
-> counsel before publication.
-
 This Data Processing Agreement ("DPA") supplements the Terms of Service between
 Ley Labs Ltd ("Processor" / "SMN") and the entity agreeing to the Terms
 ("Controller" / "Customer") and governs the processing of personal data by

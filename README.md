@@ -1,5 +1,10 @@
 # SMN — Secure Multi-agent Network
 
+[![CI](https://github.com/smn-platform/smn/actions/workflows/ci.yml/badge.svg)](https://github.com/smn-platform/smn/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/smn.svg)](https://pypi.org/project/smn/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT (Community)](https://img.shields.io/badge/License-MIT%20%28Community%29-green.svg)](LICENSE)
+
 **Deploy, govern, and scale AI agents safely.**
 
 SMN is the neutral control and execution layer for production AI agent systems. It wraps every agent action in identity checks, policy enforcement, cost controls, output guardrails, and an immutable audit trail — so you can move from pilot to governed production.
@@ -12,7 +17,7 @@ Built by [Ley Labs](https://leylabs.dev) · GitHub: [@smn-platform](https://gith
 
 ```bash
 # 1. Install
-pip install -e .
+pip install smn
 
 # 2. Initialize project
 smn init
