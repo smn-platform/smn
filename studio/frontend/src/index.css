@@ -1,0 +1,92 @@
+/* SMN Studio global styles */
+:root {
+  --bg: #06080d;
+  --surface: #0c1018;
+  --surface-2: #111827;
+  --border: #1a2235;
+  --border-hover: #2d3a52;
+  --primary: #3b82f6;
+  --accent: #10b981;
+  --amber: #f59e0b;
+  --purple: #8b5cf6;
+  --muted: #8b9ec2;
+  --dim: #4a5a7a;
+  --text: #f1f5f9;
+  --danger: #ef4444;
+  --success: #10b981;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  border: none;
+  border-radius: var(--radius);
+  padding: 6px 14px;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) { background: #2563eb; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover:not(:disabled) { border-color: var(--border-hover); color: var(--text); }
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover:not(:disabled) { background: #dc2626; }
+
+input, textarea, select {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 6px 10px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--primary); }
+
+label {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.field { margin-bottom: 12px; }
+
+/* React Flow overrides */
+.react-flow__background { background: var(--bg); }
+.react-flow__edge-path { stroke: var(--border-hover); }
+.react-flow__edge.selected .react-flow__edge-path { stroke: var(--primary); }
+.react-flow__controls { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.react-flow__controls-button { background: var(--surface); border-color: var(--border); color: var(--muted); fill: var(--muted); }
+.react-flow__controls-button:hover { background: var(--surface-2); }

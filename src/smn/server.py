@@ -17,14 +17,19 @@ from smn.db import init_db
 from smn.middleware.idempotency import IdempotencyMiddleware
 from smn.middleware.rate_limit import RateLimitMiddleware
 from smn.middleware.request_id import RequestIdMiddleware
+from smn.studio.db import init_studio_db
+from smn.studio.router import router as studio_router
 
 _STATIC_DIR = Path(__file__).parent / "static"
+# Built Vite output — present after `npm run build` in studio/frontend/
+_STUDIO_DIST = Path(__file__).parents[2] / "studio" / "frontend" / "dist"
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle."""
     await init_db()
+    await init_studio_db()
     yield
 
 
@@ -47,11 +52,16 @@ app.add_middleware(RequestIdMiddleware)
 install_error_handlers(app)
 
 app.include_router(api_router)
+app.include_router(studio_router)
 
 # ── Static assets ────────────────────────────────────────────────
 
 if _STATIC_DIR.is_dir():
     app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
+
+# Studio canvas — served from /studio when the frontend is built
+if _STUDIO_DIST.is_dir():
+    app.mount("/studio", StaticFiles(directory=str(_STUDIO_DIST), html=True), name="studio")
 
 
 @app.get("/favicon.ico", include_in_schema=False)

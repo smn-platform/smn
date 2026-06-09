@@ -17,6 +17,8 @@ class Settings(BaseSettings):
 
     # ── Database ──────────────────────────────────────────────────
     database_url: str = "sqlite+aiosqlite:///./smn.db"
+    # Studio uses a separate DB to keep workflow data isolated
+    studio_database_url: str = "sqlite+aiosqlite:///./studio.db"
 
     # ── LLM ───────────────────────────────────────────────────────
     default_model: str = "anthropic/claude-sonnet-4-6-20250415"
