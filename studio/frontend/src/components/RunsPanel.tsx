@@ -2,7 +2,7 @@
  * Runs panel — shows recent workflow executions with per-step status.
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { api } from "../api/client";
 import type { WorkflowRun } from "../types/workflow";
 
@@ -22,20 +22,31 @@ export default function RunsPanel({ workflowId, refreshTick }: Props) {
   const [runs, setRuns] = useState<WorkflowRun[]>([]);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await api.workflows.listRuns(workflowId);
       setRuns(data);
+      // Auto-expand the most recent run
+      if (data.length > 0) setExpanded(prev => prev ?? data[0].id);
+      // Keep polling while any run is active
+      const hasActive = data.some(r => r.status === "pending" || r.status === "running");
+      if (hasActive) {
+        pollRef.current = setTimeout(() => void load(), 1500);
+      }
     } catch {
-      // silently ignore — panel is secondary UI
+      // silently ignore
     } finally {
       setLoading(false);
     }
   }, [workflowId]);
 
-  useEffect(() => { void load(); }, [load, refreshTick]);
+  useEffect(() => {
+    void load();
+    return () => { if (pollRef.current) clearTimeout(pollRef.current); };
+  }, [load, refreshTick]);
 
   return (
     <div style={{ padding: "12px 16px", overflowY: "auto", maxHeight: "100%" }}>
@@ -44,6 +55,9 @@ export default function RunsPanel({ workflowId, refreshTick }: Props) {
           Recent Runs
         </div>
         {loading && <span style={{ fontSize: 11, color: "var(--dim)" }}>Loading…</span>}
+        {!loading && runs.some(r => r.status === "pending" || r.status === "running") && (
+          <span title="Polling for updates" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--amber)", display: "inline-block", animation: "pulse 1.2s infinite" }} />
+        )}
       </div>
 
       {runs.length === 0 && !loading && (

@@ -76,12 +76,21 @@ class HTTPNode(BaseNode):
                 raw_body = body.encode()
 
         async with httpx.AsyncClient(timeout=timeout) as client:
-            resp = await client.request(
-                method=method,
-                url=url,
-                headers=headers or None,
-                content=raw_body,
-            )
+            try:
+                resp = await client.request(
+                    method=method,
+                    url=url,
+                    headers=headers or None,
+                    content=raw_body,
+                )
+            except httpx.TimeoutException:
+                raise TimeoutError(
+                    f"HTTPNode: request to {url} timed out after {timeout:.0f}s"
+                )
+            except httpx.ConnectError as exc:
+                raise ConnectionError(
+                    f"HTTPNode: could not connect to {url} — {exc}"
+                )
 
         try:
             data: Any = resp.json()

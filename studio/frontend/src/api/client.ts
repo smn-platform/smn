@@ -17,6 +17,10 @@ export function setApiKey(key: string): void {
   localStorage.setItem(KEY_STORAGE, key);
 }
 
+export function clearApiKey(): void {
+  localStorage.removeItem(KEY_STORAGE);
+}
+
 async function req<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,

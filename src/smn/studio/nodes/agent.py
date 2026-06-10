@@ -41,7 +41,7 @@ class AgentNode(BaseNode):
         agent = Agent(
             name="studio-ephemeral",
             model=model or None,
-            policy_name=policy_name,
+            policy=policy_name,
         )
 
         result = await execute_task(agent, input_text)

@@ -162,7 +162,10 @@ async def execute_workflow(
         await db.commit()
         await db.refresh(step)
         step_id = step.id
-        started = step.started_at
+        # Capture wall-clock time directly — not from the DB record, because
+        # SQLite strips timezone info on round-trip, producing a naive datetime
+        # that can't be subtracted from the UTC-aware datetime returned by _NOW().
+        started = datetime.now(timezone.utc)
 
         # ── Execute ───────────────────────────────────────────────
         try:

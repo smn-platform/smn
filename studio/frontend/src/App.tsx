@@ -24,22 +24,27 @@ export default function App() {
           <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>SMN Studio</div>
           <div style={{ color: "var(--muted)", fontSize: 13 }}>Enter your SMN API key to continue</div>
         </div>
-        <div style={{ display: "flex", gap: 8, width: 360 }}>
+        <form
+          style={{ display: "flex", gap: 8, width: 360 }}
+          onSubmit={e => { e.preventDefault(); handleConnect(); }}
+        >
           <input
             type="password"
             placeholder="smn_..."
             value={keyInput}
             onChange={e => setKeyInput(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleConnect()}
             style={{ flex: 1 }}
             autoFocus
+            autoComplete="current-password"
           />
-          <button className="btn-primary" onClick={handleConnect} disabled={!keyInput}>
+          <button type="submit" className="btn-primary" disabled={!keyInput}>
             Connect
           </button>
-        </div>
-        <div style={{ fontSize: 12, color: "var(--dim)" }}>
-          Get a key via <code style={{ fontFamily: "monospace" }}>POST /api/v1/auth/bootstrap</code>
+        </form>
+        <div style={{ fontSize: 12, color: "var(--dim)", textAlign: "center", lineHeight: 1.7 }}>
+          Get a key: <code style={{ fontFamily: "monospace", fontSize: 11, background: "var(--surface-2)", padding: "1px 5px", borderRadius: 4 }}>POST /api/v1/auth/bootstrap</code>
+          <br />
+          <span>with body <code style={{ fontFamily: "monospace", fontSize: 11, background: "var(--surface-2)", padding: "1px 5px", borderRadius: 4 }}>{`{"tenant_name":"my-org"}`}</code></span>
         </div>
       </div>
     );

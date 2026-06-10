@@ -1,7 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../api/client";
+import { api, clearApiKey } from "../api/client";
 import type { Workflow } from "../types/workflow";
+
+function Step({ n, text }: { n: number; text: string }) {
+  return (
+    <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+      <span style={{ width: 20, height: 20, borderRadius: "50%", background: "var(--primary)", color: "#fff", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>{n}</span>
+      <span style={{ color: "var(--muted)", lineHeight: 1.5 }}>{text}</span>
+    </div>
+  );
+}
 
 export default function WorkflowList() {
   const navigate = useNavigate();
@@ -54,7 +63,16 @@ export default function WorkflowList() {
           <h1 style={{ fontSize: 22, fontWeight: 700 }}>SMN Studio</h1>
           <div style={{ color: "var(--muted)", fontSize: 13, marginTop: 2 }}>Visual workflow builder</div>
         </div>
-        <button className="btn-primary" onClick={() => setCreating(true)}>+ New Workflow</button>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <button
+            style={{ background: "transparent", border: "none", fontSize: 12, color: "var(--dim)", cursor: "pointer", padding: "4px 8px" }}
+            title="Change API key"
+            onClick={() => { clearApiKey(); window.location.reload(); }}
+          >
+            Change key
+          </button>
+          <button className="btn-primary" onClick={() => setCreating(true)}>+ New Workflow</button>
+        </div>
       </div>
 
       {/* Create form */}
@@ -82,9 +100,19 @@ export default function WorkflowList() {
       {loading && <div style={{ color: "var(--muted)", textAlign: "center", paddingTop: 40 }}>Loading…</div>}
 
       {!loading && workflows.length === 0 && (
-        <div style={{ textAlign: "center", color: "var(--dim)", paddingTop: 60 }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>⬡</div>
-          <div>No workflows yet. Create one to get started.</div>
+        <div style={{ textAlign: "center", color: "var(--muted)", paddingTop: 40, display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
+          <div style={{ fontSize: 36, marginBottom: 4 }}>⬡</div>
+          <div style={{ fontWeight: 600, fontSize: 15 }}>No workflows yet</div>
+          <div style={{ color: "var(--dim)", fontSize: 13, lineHeight: 1.8, background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: "20px 28px", textAlign: "left", maxWidth: 400 }}>
+            <div style={{ fontWeight: 600, color: "var(--muted)", marginBottom: 10 }}>How it works</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <Step n={1} text="Click «+ New Workflow» to create one" />
+              <Step n={2} text="Drag nodes from the left panel onto the canvas" />
+              <Step n={3} text="Click a node to configure it in the right panel" />
+              <Step n={4} text="Connect nodes by dragging from the ▶ handle on the right edge to the ● handle on the left" />
+              <Step n={5} text="Press Save then ▶ Run to execute" />
+            </div>
+          </div>
         </div>
       )}
 

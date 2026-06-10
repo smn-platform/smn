@@ -90,3 +90,9 @@ label {
 .react-flow__controls { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 .react-flow__controls-button { background: var(--surface); border-color: var(--border); color: var(--muted); fill: var(--muted); }
 .react-flow__controls-button:hover { background: var(--surface-2); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+

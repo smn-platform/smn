@@ -185,7 +185,18 @@ export default function Editor() {
 
   const selectedNode = nodes.find(n => n.id === selectedNodeId) ?? null;
 
-  // ── Render ────────────────────────────────────────────────────
+  // ── Ctrl+S shortcut ───────────────────────────────────────────
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        void handleSave();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workflow, nodes, edges]);
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       {/* Top bar */}
@@ -203,7 +214,7 @@ export default function Editor() {
           Runs
         </button>
         <button className="btn-ghost" onClick={() => void handleSave()} disabled={saving}>
-          {saving ? "Saving…" : "Save"}
+          {saving ? "Saving…" : "Save  ⌘S"}
         </button>
         <button className="btn-primary" onClick={() => void handleRun()} disabled={running || saving}>
           {running ? "Running…" : "▶ Run"}
@@ -215,7 +226,19 @@ export default function Editor() {
         <NodePalette onDragStart={onDragStart} />
 
         {/* Canvas */}
-        <div style={{ flex: 1 }} onDrop={onDrop} onDragOver={onDragOver}>
+        <div style={{ flex: 1, position: "relative" }} onDrop={onDrop} onDragOver={onDragOver}>
+          {nodes.length === 0 && (
+            <div style={{
+              position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center", pointerEvents: "none",
+              zIndex: 5, gap: 10,
+            }}>
+              <div style={{ fontSize: 40, opacity: 0.18 }}>⬡</div>
+              <div style={{ fontSize: 14, color: "var(--dim)", opacity: 0.6, textAlign: "center", lineHeight: 1.7 }}>
+                Drag a node from the left panel<br />to start building your workflow
+              </div>
+            </div>
+          )}
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -236,9 +259,9 @@ export default function Editor() {
         </div>
 
         {/* Right panel — config or runs */}
-        <div style={{ width: 260, background: "var(--surface)", borderLeft: "1px solid var(--border)", display: "flex", flexDirection: "column" }}>
+        <div style={{ width: 280, background: "var(--surface)", borderLeft: "1px solid var(--border)", display: "flex", flexDirection: "column" }}>
           {rightPanel === "config" ? (
-            <ConfigPanel node={selectedNode ? { id: selectedNode.id, type: selectedNode.type as WorkflowNode["type"], position: selectedNode.position, data: selectedNode.data as WorkflowNode["data"] } : null} onChange={onNodeConfigChange} />
+            <ConfigPanel node={selectedNode ? { id: selectedNode.id, type: selectedNode.type as WorkflowNode["type"], position: selectedNode.position, data: selectedNode.data as unknown as WorkflowNode["data"] } : null} onChange={onNodeConfigChange} />
           ) : (
             workflow && <RunsPanel workflowId={workflow.id} refreshTick={runTick} />
           )}
