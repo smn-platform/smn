@@ -49,6 +49,13 @@ export interface Workflow {
   updated_at: string;
 }
 
+export interface CopilotDraft {
+  name: string;
+  description: string;
+  definition: WorkflowDefinition;
+  notes: string[];
+}
+
 export interface WorkflowRunStep {
   id: string;
   node_id: string;

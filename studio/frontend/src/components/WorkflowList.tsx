@@ -19,6 +19,9 @@ export default function WorkflowList() {
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
+  const [copilotPrompt, setCopilotPrompt] = useState("");
+  const [drafting, setDrafting] = useState(false);
+  const [draftNotes, setDraftNotes] = useState<string[]>([]);
 
   const load = useCallback(async () => {
     try {
@@ -41,6 +44,28 @@ export default function WorkflowList() {
       navigate(`/workflows/${wf.id}`);
     } catch (e) {
       setError(String(e));
+    }
+  }
+
+  async function handleCopilotCreate() {
+    const prompt = copilotPrompt.trim();
+    if (!prompt) return;
+    setDrafting(true);
+    setError(null);
+    setDraftNotes([]);
+    try {
+      const draft = await api.copilot.draftWorkflow(prompt);
+      const wf = await api.workflows.create({
+        name: draft.name,
+        description: draft.description,
+        definition: draft.definition,
+      });
+      setDraftNotes(draft.notes);
+      navigate(`/workflows/${wf.id}`);
+    } catch (e) {
+      setError(String(e));
+    } finally {
+      setDrafting(false);
     }
   }
 
@@ -76,6 +101,40 @@ export default function WorkflowList() {
       </div>
 
       {/* Create form */}
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: 16, marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 10 }}>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 15 }}>Build from a description</div>
+            <div style={{ color: "var(--muted)", fontSize: 12, marginTop: 2 }}>
+              Describe the workflow you want. SMN will draft editable steps on the canvas.
+            </div>
+          </div>
+          <div style={{ fontSize: 11, color: "var(--accent)", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.18)", borderRadius: 999, padding: "3px 8px", whiteSpace: "nowrap" }}>
+            Copilot preview
+          </div>
+        </div>
+        <textarea
+          rows={3}
+          value={copilotPrompt}
+          onChange={e => setCopilotPrompt(e.target.value)}
+          placeholder="E.g. When a new client form arrives, extract the key details, decide if it is urgent, then send a summary to my team."
+          onKeyDown={e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "Enter") void handleCopilotCreate();
+          }}
+        />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginTop: 10 }}>
+          <div style={{ color: "var(--dim)", fontSize: 11 }}>Press Ctrl+Enter to draft</div>
+          <button className="btn-primary" onClick={() => void handleCopilotCreate()} disabled={!copilotPrompt.trim() || drafting}>
+            {drafting ? "Drafting..." : "Draft workflow"}
+          </button>
+        </div>
+        {draftNotes.length > 0 && (
+          <div style={{ marginTop: 10, color: "var(--muted)", fontSize: 12 }}>
+            {draftNotes[0]}
+          </div>
+        )}
+      </div>
+
       {creating && (
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: 16, marginBottom: 16, display: "flex", gap: 8 }}>
           <input

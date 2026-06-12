@@ -4,7 +4,7 @@
  * In production the app is served from /studio so all paths are relative.
  */
 
-import type { Workflow, WorkflowDefinition, WorkflowRun, WorkflowTrigger } from "../types/workflow";
+import type { CopilotDraft, Workflow, WorkflowDefinition, WorkflowRun, WorkflowTrigger } from "../types/workflow";
 
 export const API_BASE = "/studio/api/v1";
 export const KEY_STORAGE = "smn_api_key";
@@ -54,6 +54,14 @@ export interface WorkflowUpdatePayload {
 }
 
 export const api = {
+  copilot: {
+    draftWorkflow: (prompt: string): Promise<CopilotDraft> =>
+      req("/copilot/draft-workflow", {
+        method: "POST",
+        body: JSON.stringify({ prompt }),
+      }),
+  },
+
   workflows: {
     list: (): Promise<Workflow[]> => req("/workflows"),
 

@@ -19,10 +19,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from smn.auth import get_current_tenant
 from smn.models import Tenant
+from smn.studio.copilot import draft_workflow
 from smn.studio.db import get_studio_db, studio_async_session
 from smn.studio.executor import execute_workflow
 from smn.studio.models import WebhookToken, Workflow, WorkflowRun, WorkflowRunStep
 from smn.studio.schemas import (
+    CopilotDraftRequest,
+    CopilotDraftResponse,
     RunTriggerRequest,
     WebhookCreateResponse,
     WorkflowCreate,
@@ -37,7 +40,9 @@ from smn.studio.schemas import (
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/studio/api/v1")
 
-_NOW = lambda: datetime.now(timezone.utc)
+
+def _NOW() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 # ── Serialisation helpers ─────────────────────────────────────────
@@ -209,6 +214,29 @@ async def delete_workflow(
 
 
 # ── Execution ─────────────────────────────────────────────────────
+
+
+@router.post(
+    "/copilot/draft-workflow",
+    response_model=CopilotDraftResponse,
+    tags=["studio"],
+)
+async def draft_workflow_from_prompt(
+    body: CopilotDraftRequest,
+    tenant: Tenant = Depends(get_current_tenant),
+) -> CopilotDraftResponse:
+    del tenant
+    try:
+        name, description, definition, notes = draft_workflow(body.prompt)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+    return CopilotDraftResponse(
+        name=name,
+        description=description,
+        definition=definition,
+        notes=notes,
+    )
 
 
 @router.post(

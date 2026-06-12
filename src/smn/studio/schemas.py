@@ -78,6 +78,17 @@ class WorkflowResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class CopilotDraftRequest(BaseModel):
+    prompt: str = Field(min_length=1, max_length=4000)
+
+
+class CopilotDraftResponse(BaseModel):
+    name: str
+    description: str
+    definition: WorkflowDefinition
+    notes: list[str] = Field(default_factory=list)
+
+
 # ── Execution ─────────────────────────────────────────────────────
 
 
